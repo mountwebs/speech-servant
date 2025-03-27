@@ -66,7 +66,7 @@ void playRandomSong() {
 
   // Get the number of songs on the SD card
 
-  int totalSongs = myDFPlayer.readFileCounts();
+  int totalSongs = myDFPlayer.readFileCounts() / 2;
 
       Serial.print("Number of files: ");
 
