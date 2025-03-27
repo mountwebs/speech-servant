@@ -8,6 +8,7 @@
 SoftwareSerial mySoftwareSerial(12, 13); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
+
 Adafruit_MPU6050 mpu;
 
 // Threshold values
@@ -71,12 +72,10 @@ void triggerEvent() {
 
 // Function to play a random song
 void playRandomSong() {
-  if (totalSongs > 0) {
+  if (totalSongs > 0 && digitalRead(14) == HIGH) {
     int randomSong = random(1, totalSongs + 1); // Generate a random song number
     Serial.print("Playing song number: ");
     Serial.println(randomSong);
     myDFPlayer.play(randomSong); // Play the random song
-  } else {
-    Serial.println("No songs found on the SD card.");
   }
 }
