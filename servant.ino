@@ -8,13 +8,13 @@
 SoftwareSerial mySoftwareSerial(12, 13); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
-
 Adafruit_MPU6050 mpu;
+mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
 
 // Threshold values
-const float thresholdX = 10.0;  // X-axis threshold (in g)
-const float thresholdY = 10.0;  // Y-axis threshold (in g)
-const float thresholdZ = 10.0;  // Z-axis threshold (in g)
+const float thresholdX = 1.5;  // X-axis threshold (in g)
+const float thresholdY = 1.5;  // Y-axis threshold (in g)
+const float thresholdZ = 1.5;  // Z-axis threshold (in g)
 
 bool thresholdReached = false;
 
