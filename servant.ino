@@ -4,12 +4,13 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 
+Adafruit_MPU6050 mpu;
+const float motionThreshold = 14;  // Adjust this value to change sensitivity
+
 // Set up the software serial for communication with DFPlayer Mini
 SoftwareSerial mySoftwareSerial(12, 13); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 
-Adafruit_MPU6050 mpu;
-mpu.setAccelerometerRange(MPU6050_RANGE_2_G);
 
 // Threshold values
 const float thresholdX = 1.5;  // X-axis threshold (in g)
