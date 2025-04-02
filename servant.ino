@@ -17,21 +17,25 @@ const float thresholdX = 1.5;  // X-axis threshold (in g)
 const float thresholdY = 1.5;  // Y-axis threshold (in g)
 const float thresholdZ = 1.5;  // Z-axis threshold (in g)
 
-bool thresholdReached = false;
-
 int totalSongs = 0;
 
 void setup() {
   Serial.begin(115200); // Start the serial monitor
-
-  mySoftwareSerial.begin(9600); // Start software serial communication
-
+  while (!Serial);
+  Serial.println("Initializing MPU6050...");
+  
   if (!mpu.begin()) {
     Serial.println("Failed to find MPU6050 sensor.");
     while (1);
   }
 
+  mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
+  mpu.setGyroRange(MPU6050_RANGE_500_DEG);
+  mpu.setFilterBandwidth(MPU6050_BAND_21_HZ);
+
   Serial.println("MPU6050 Found!");
+
+  mySoftwareSerial.begin(9600); // Start software serial communication
 
   // Initialize DFPlayer Mini
   if (!myDFPlayer.begin(mySoftwareSerial)) {
@@ -47,27 +51,20 @@ void setup() {
 void loop() {
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
-  // Uncomment to play a random song every 10 seconds:
-  // delay(10000); 
-  // playRandomSong();
-    // Check if any of the accelerometer values exceed the threshold
-    if (abs(a.acceleration.x) > thresholdX || abs(a.acceleration.y) > thresholdY || abs(a.acceleration.z) > thresholdZ) {
-      if (!thresholdReached) {
-        triggerEvent(); // Trigger the event
-        thresholdReached = true; // Ensure the event is only triggered once
-        Serial.println("Threshold reached");
-      }
-    } else {
-      thresholdReached = false; // Reset the flag when the threshold is no longer exceeded
-    }
-  
-    delay(100); // Small delay to avoid flooding the serial output
+
+  float motionMagnitude = abs(a.acceleration.x) + abs(a.acceleration.y) + abs(a.acceleration.z);
+
+  if (motionMagnitude > motionThreshold) {
+    triggerEvent();
+    delay(500); // Prevent multiple triggers in quick succession
+    digitalWrite(LED_BUILTIN, LOW);
+
+  }  
 }
 
 void triggerEvent() {
-  // Serial.println("Threshold exceeded! Triggering event...");
-  // Example action: Turn on an LED or perform another action
-  // digitalWrite(LED_BUILTIN, HIGH); // Uncomment this if you want to trigger a built-in LED
+  Serial.println("Motion detected!");
+  digitalWrite(LED_BUILTIN, HIGH); // Uncomment this if you want to trigger a built-in LED
   playRandomSong();
 }
 
